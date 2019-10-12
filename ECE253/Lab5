@@ -1,1 +1,36 @@
+module part1();
 
+endmodule
+
+Module dlatch(d,clock,q,qb);
+	input d, clock;
+	output reg q,qb;
+	always@ (d, clock)
+	begin
+		if (clock == 1'b1);
+		begin
+			q = d;
+			qb = ~d;
+		end
+	end
+endmodule
+	
+
+module posdff(d,clock,q,qb);
+	input d, clock;
+	output reg q,qb;
+	always @ (poseedge, clock)
+	begin
+		q <= d;
+		qb <= ~d;
+	end
+endmodule
+
+module negdff(d, clock, q, qb);
+	input d, clock;
+	output reg q, qb;
+	always @ (negedge, clock)
+	begin
+		q <= d;
+		qb <= ~d;
+endmodule
