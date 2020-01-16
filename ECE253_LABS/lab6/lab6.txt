@@ -1,0 +1,168 @@
+module part1a(LEDR,SW,KEY);
+	input [9:0] SW; 
+	input [0:0] KEY;
+	output [9:0] LEDR;
+	
+	wire [8:0] y,Y;
+	//wire w,reset,clk;
+	//assign clk = SW[2];
+	//assign w = SW[1];
+	//assign reset = SW[0];
+	
+	
+	assign Y[0] = ~SW[0];
+	assign Y[1] = (~SW[1])&(y[0]|y[5]|y[6]|y[7]|y[8]);
+	assign Y[2] = (~SW[1])&(y[1]);
+	assign Y[3] = (~SW[1])&(y[2]);
+	assign Y[4] = (~SW[1])&(y[3]|y[4]);
+	assign Y[5] = SW[1]&(y[0]|y[1]|y[2]|y[3]|y[4]);
+	assign Y[6] = SW[1]&(y[5]);
+	assign Y[7] = SW[1]&(y[6]);
+	assign Y[8] = SW[1]&(y[7]|y[8]);
+
+	
+	//fsm U0 (SW[0],KEY[0],LEDR[8:0],SW[1],LEDR[9]);
+	ddff F0 (Y[0],KEY[0],SW[0],1'b1,y[0]);
+	ddff F1 (Y[1],KEY[0],SW[0],1'b0,y[1]);
+	ddff F2 (Y[2],KEY[0],SW[0],1'b0,y[2]);
+	ddff F3 (Y[3],KEY[0],SW[0],1'b0,y[3]);
+	ddff F4 (Y[4],KEY[0],SW[0],1'b0,y[4]);
+	ddff F5 (Y[5],KEY[0],SW[0],1'b0,y[5]);
+	ddff F6 (Y[6],KEY[0],SW[0],1'b0,y[6]);
+	ddff F7 (Y[7],KEY[0],SW[0],1'b0,y[7]);	
+	ddff F8 (Y[8],KEY[0],SW[0],1'b0,y[8]);
+	
+	assign LEDR[9] = (y[4]|y[8]);
+	assign  LEDR[8:0] = y;
+	
+endmodule
+
+
+
+module ddff(D,clk,reset,resettype,Q);
+	input D,clk,reset,resettype;
+	output reg Q;
+	
+	always@ (posedge clk or negedge reset)
+	begin
+		if (reset == 1'b0)
+		
+			Q <= resettype;
+			
+		else
+			
+			Q <= D;
+	end
+			
+endmodule
+---------------------------------------------
+module part1b(LEDR,SW,KEY);
+	input [9:0] SW; 
+	input [0:0] KEY;
+	output [9:0] LEDR;
+	
+	wire [8:0] y,Y;
+	//wire w,reset,clk;
+	//assign clk = SW[2];
+	//assign w = SW[1];
+	//assign reset = SW[0];
+	
+	
+	assign Y[0] = SW[0];
+	assign Y[1] = (~SW[1])&(~y[0]|y[5]|y[6]|y[7]|y[8]);
+	assign Y[2] = (~SW[1])&(y[1]);
+	assign Y[3] = (~SW[1])&(y[2]);
+	assign Y[4] = (~SW[1])&(y[3]|y[4]);
+	assign Y[5] = SW[1]&(y[1]|y[2]|y[3]|y[4]);
+	assign Y[6] = SW[1]&(y[5]);
+	assign Y[7] = SW[1]&(y[6]);
+	assign Y[8] = SW[1]&(y[7]|y[8]);
+
+	
+	//fsm U0 (SW[0],KEY[0],LEDR[8:0],SW[1],LEDR[9]);
+	ddff F0 (Y[0],KEY[0],SW[0],1'b0,y[0]);
+	ddff F1 (Y[1],KEY[0],SW[0],1'b0,y[1]);
+	ddff F2 (Y[2],KEY[0],SW[0],1'b0,y[2]);
+	ddff F3 (Y[3],KEY[0],SW[0],1'b0,y[3]);
+	ddff F4 (Y[4],KEY[0],SW[0],1'b0,y[4]);
+	ddff F5 (Y[5],KEY[0],SW[0],1'b0,y[5]);
+	ddff F6 (Y[6],KEY[0],SW[0],1'b0,y[6]);
+	ddff F7 (Y[7],KEY[0],SW[0],1'b0,y[7]);	
+	ddff F8 (Y[8],KEY[0],SW[0],1'b0,y[8]);
+	
+	assign LEDR[9] = (y[4]|y[8]);
+	assign  LEDR[8:0] = y;
+	//assign LEDR[0] = y[2]|y[3]|y[4]|y[5]|y[6]|y[7]|y[8]|y[1];
+	
+endmodule
+
+
+
+module ddff(D,clk,reset,resettype,Q);
+	input D,clk,reset,resettype;
+	output reg Q;
+	
+	always@ (posedge clk )
+	begin
+		if (reset == 1'b0)
+		
+			Q <= resettype;
+			
+		else
+			
+			Q <= D;
+	end
+			
+endmodule
+-------------------------------------
+module part2(LEDR,SW,KEY);
+	input [9:0] SW; 
+	input [0:0] KEY;
+	output [9:0] LEDR;
+	
+	reg [3:0] y,Y;
+	wire w,reset,clk,z;
+	assign clk = KEY[0];
+	assign w = SW[1];
+	assign reset = SW[0];
+	
+	
+	parameter A = 4'b0000, B = 4'b0001, C = 4'b0010, D = 4'b0011, E = 4'b0100, F = 4'b0101, G = 4'b0110, H = 4'b0111, I = 4'b1000;
+	
+	always @(w,y)
+	begin: state_table 
+		case (y)
+		A:	if(!w) Y = B;
+			else Y = F;
+		B:	if(!w) Y = C;
+			else Y = F;		
+		C:	if(!w) Y = D;
+			else Y = F;		
+		D:	if(!w) Y = E;
+			else Y = F;	
+		E:	if(!w) Y = E;
+			else Y = F;
+		F:	if(!w) Y = B;
+			else Y = G;
+		G:	if(!w) Y = B;
+			else Y = H;
+		H:	if(!w) Y = B;
+			else Y = I;
+		I:	if(!w) Y = B;
+			else Y = I;
+		default: Y = 4'bxxxx;
+		endcase
+	end
+	 
+	always @(posedge clk)
+	begin
+		if (reset ==0)
+			y<=A;
+		else
+			y<=Y;
+	end
+	
+	assign LEDR[3:0] = y;
+	assign LEDR [9] = (Y == E|Y == I);
+endmodule
+--------------

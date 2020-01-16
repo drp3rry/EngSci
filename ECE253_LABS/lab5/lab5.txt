@@ -1,0 +1,217 @@
+module part2(SW,KEY,LEDR,HEX0,HEX1,HEX2,HEX3,HEX4,HEX5);
+	input [7:0]SW;
+	input[1:0] KEY;
+	output [6:0] HEX0,HEX1,HEX2,HEX3,HEX4,HEX5;
+	output [9:0] LEDR;
+	
+	wire [7:0] a,b;
+	wire [8:0] s;
+	
+	assign a = SW[7:0];
+	reg8 F0(a,KEY[1],KEY[0],b);
+	assign s = a + b;
+	
+	display Da0(a[3:0],HEX0);
+	display Da1(a[7:4],HEX1);
+	
+	display Db0(b[3:0],HEX2);
+	display Db1(b[7:4],HEX3);
+	
+	display Ds0(s[3:0],HEX4);
+	display Ds1(s[7:4],HEX5);
+	
+	assign LEDR[9:1] = 1'b0;
+	assign LEDR[0] = s[8];
+	
+
+endmodule
+
+module display(in,display0);
+	input [3:0] in;
+	output reg [6:0] display0;
+	
+	always @ (in)
+		case(in%16)
+			0: display0 = 7'b1000000;
+			1: display0 = 7'b1111001;
+			2: display0 = 7'b0100100;
+			3: display0 = 7'b0110000;
+			4: display0 = 7'b0011001;
+			5: display0 = 7'b0010010;
+			6: display0 = 7'b0000010;
+			7: display0 = 7'b1111000;
+			8: display0 = 7'b0000000;
+			9: display0 = 7'b0011000;
+			10: display0 = 7'b0001000;
+			11: display0 = 7'b0000011;
+			12: display0 = 7'b1000110;
+			13: display0 = 7'b0100001;
+			14: display0 = 7'b0000110;
+			15: display0 = 7'b0001110;
+		endcase
+endmodule	
+		
+	
+module reg8(D,clk,reset,Q);
+ 	input [7:0]D; 
+ 	input clk,reset; 
+ 	output reg [7:0]Q; 
+ 	 
+ 	always @(posedge clk or negedge reset) 
+ 		if(~reset) 
+ 			Q <= 8'b00000000; 
+ 		else 
+ 			Q <= D; 
+endmodule 
+
+-----------------------------------------------
+module part3(SW,KEY,HEX0,HEX1,HEX2,HEX3);
+	input [1:0] SW, KEY;
+	output [6:0] HEX0,HEX1,HEX2,HEX3;
+	
+	wire[15:0] inter;
+	
+	counter F0(SW[1],KEY[0],SW[0],inter);
+	
+	display D0(inter[3:0],HEX0);
+	display D1(inter[7:4],HEX1);
+	display D2(inter[11:8],HEX2);
+	display D3(inter[15:12],HEX3);
+	
+	
+endmodule
+
+module counter(enable,clk,clear,count); 
+	input enable,clk,clear; 
+ 	output [15:0]count; 
+ 	 
+ 	tflipflop U0 (enable,clk,clear,count[0]); 
+ 	tflipflop U1 (count[0]&&enable,clk,clear,count[1]); 
+ 	tflipflop U2 (count[1]&&count[0],clk,clear,count[2]); 
+ 	tflipflop U3 (count[2]&&count[1]&&count[0],clk,clear,count[3]); 
+ 	tflipflop U4 (count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[4]); 
+ 	tflipflop U5 (count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[5]); 
+ 	tflipflop U6 (count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[6]); 
+ 	tflipflop U7 (count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[7]); 
+ 	tflipflop U8 (count[7]&&count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[8]); 
+        tflipflop U9 (count[8]&&count[7]&&count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[9]); 	
+	tflipflop U10(count[9]&&count[8]&&count[7]&&count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[10]); 
+	tflipflop U11(count[10]&&count[9]&&count[8]&&count[7]&&count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[11]); 
+	tflipflop U12(count[11]&&count[10]&&count[9]&&count[8]&&count[7]&&count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[12]); 
+	tflipflop U13(count[12]&&count[11]&&count[10]&&count[9]&&count[8]&&count[7]&&count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[13]); 
+	tflipflop U14(count[13]&&count[12]&&count[11]&&count[10]&&count[9]&&count[8]&&count[7]&&count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[14]); 
+	tflipflop U15(count[14]&&count[13]&&count[12]&&count[11]&&count[10]&&count[9]&&count[8]&&count[7]&&count[6]&&count[5]&&count[4]&&count[3]&&count[2]&&count[1]&&count[0],clk,clear,count[15]); 
+
+	
+endmodule 
+ 
+ 
+ 
+ 
+module tflipflop(T,clk,res,Q); 
+ 	input T,clk,res; 
+ 	output reg Q; 
+ 	 
+ 	always @ (posedge clk or negedge res) 
+ 		if (~res) 
+ 			Q <= 1'b0; 
+ 		else if (T) 
+ 			Q <= !Q;  
+endmodule 
+
+module display(in,display0);
+	input [3:0] in;
+	output reg [6:0] display0;
+	
+	always @ (in)
+		case(in%16)
+			0: display0 = 7'b1000000;
+			1: display0 = 7'b1111001;
+			2: display0 = 7'b0100100;
+			3: display0 = 7'b0110000;
+			4: display0 = 7'b0011001;
+			5: display0 = 7'b0010010;
+			6: display0 = 7'b0000010;
+			7: display0 = 7'b1111000;
+			8: display0 = 7'b0000000;
+			9: display0 = 7'b0011000;
+			10: display0 = 7'b0001000;
+			11: display0 = 7'b0000011;
+			12: display0 = 7'b1000110;
+			13: display0 = 7'b0100001;
+			14: display0 = 7'b0000110;
+			15: display0 = 7'b0001110;
+		endcase
+endmodule	
+---------------------------------
+module part4(KEY,SW,HEX0,HEX1,HEX2,HEX3); 
+	input [1:0] KEY, SW;
+ 	output [6:0] HEX0,HEX1,HEX2,HEX3;
+	wire [15:0]count;
+	
+	countreg16 F0(SW[1],KEY[1],SW[0],count);
+	
+	
+	display D0 (count[3:0],HEX0);
+ 	display D1 (count[7:4],HEX1); 
+   display D2 (count[11:8],HEX2);
+	display D3 (count[15:12],HEX3);
+	
+endmodule 
+ 
+ 
+ 
+ 
+module countreg16(D,clk,reset,Q);
+ 	input [15:0]D; 
+ 	input clk,reset; 
+ 	output reg [15:0]Q; 
+ 	 
+ 	always @(posedge clk or negedge reset) 
+ 		if(~reset) 
+ 			Q <= 16'b00000000; 
+ 		else 
+ 			Q <= Q + 1; 
+endmodule 
+
+module display(in,display0);
+	input [3:0] in;
+	output reg [6:0] display0;
+	
+	always @ (in)
+		case(in%16)
+			0: display0 = 7'b1000000;
+			1: display0 = 7'b1111001;
+			2: display0 = 7'b0100100;
+			3: display0 = 7'b0110000;
+			4: display0 = 7'b0011001;
+			5: display0 = 7'b0010010;
+			6: display0 = 7'b0000010;
+			7: display0 = 7'b1111000;
+			8: display0 = 7'b0000000;
+			9: display0 = 7'b0011000;
+			10: display0 = 7'b0001000;
+			11: display0 = 7'b0000011;
+			12: display0 = 7'b1000110;
+			13: display0 = 7'b0100001;
+			14: display0 = 7'b0000110;
+			15: display0 = 7'b0001110;
+		endcase
+endmodule	
+----------------------
+module part5(CLOCK50, HEX0);
+	input CLOCK_50;
+	output [6:0] HEX0;
+
+
+
+
+endmodule
+
+module clock(CLOCK_50)
+
+
+
+
+
+
