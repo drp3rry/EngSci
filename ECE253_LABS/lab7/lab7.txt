@@ -1,0 +1,88 @@
+LAB 7
+----------interation 1
+.global _start
+_start:
+	LDR R0 = LIST // RO gets address List, r0 is like a pointer
+    MOV R1, #0//R1 sets to 0, this will count the list
+    
+	LDR R2 [R0]// set R2 to initial value in list
+    MOV R3, #0//set r3 to zero, accumulate sum here
+   
+    
+LOOP: 
+    ADD R1,R1,#1//count up
+    ADD R3,R3,R2//start accumulaitng sum in r3
+    LDR R2 [R0, #4]//increment r2 to next value in list
+    CMP R2, #-1//check if r2 is -1
+    BEQ LOOP
+	
+ .LIST:   
+	.word 1,2,3,4,0xA,-1
+.end
+------------iteration 2
+.global _start
+_start:
+	LDR R0, = LIST; // RO gets address List, r0 is like a pointer
+    MOV R1, #0//R1 sets to 0, this will count the list
+    
+	LDR R2, [R0]// set R2 to initial value in list
+    MOV R3, #0//set r3 to zero, accumulate sum here
+   
+    
+LOOP: 
+	ADD R1,R1,#1//count up
+    ADD R3,R3,R2//start accumulaitng sum in r3
+    LSL R2, R2, #1//increment r2 to next value in list
+    CMP R2, #-1//check if r2 is -1
+    BEQ LOOP
+	
+ LIST:   
+	.word 1,2,3,4,0xA,-1
+.end
+
+-----------iteration 3
+.global _start
+_start:
+	LDR R0, = LIST; // RO gets address List, r0 is like a pointer
+    MOV R1, #0//R1 sets to 0, this will count the list
+    
+	LDR R2, [R0]// set R2 to initial value in list
+    MOV R3, #0//set r3 to zero, accumulate sum here
+   
+    
+LOOP: 
+	ADD R1,R1,#1//count up
+    ADD R3,R3,R2//start accumulaitng sum in r3
+    LDR R2, [R0], #4//increment r2 to next value in list
+    CMP R2, #-1//check if r2 is -1
+    BEQ LOOP
+END:
+	
+   
+ LIST:   
+	.word 1,2,3,4,0xA,-1
+.end
+---------
+.global _start
+_start:
+	LDR R0, = LIST; // RO gets address List, r0 is like a pointer
+    MOV R1, #0//R1 sets to be a counter, this will count the list
+    MOV R3, #0//set r3 to zero, accumulate sum here
+      
+LOOP: 
+	LSR R2, R0, #1//iterate through list
+    ADD R3,R3,R2//start accumulaitng sum in r3
+	ADD R1,R1,#1//count up
+    
+    CMP R2, #-1//check if r2 is -1
+    BGT LOOP
+    //STR R1, LENGTH
+   // STR R3, SUM
+END:  B END
+	
+   
+ LIST:   
+	.word 1,2,3,4,0xA,-1
+.end
+----------
+PART 4
